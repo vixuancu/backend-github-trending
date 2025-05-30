@@ -3,7 +3,10 @@ package main
 import (
 	"backend-github-trending/db"
 	"backend-github-trending/handler"
+	"backend-github-trending/repository/repo_impl"
+	"backend-github-trending/router"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 func main() {
@@ -16,14 +19,19 @@ func main() {
 		Database: "github_trending",
 	}
 	if err := sql.Connect(); err != nil {
-		return // error connecting to database
+		log.Error(err.Error())
+		return
 	}
 
 	defer sql.Close()
 	e := echo.New()
-	e.GET("/", handler.HandlerWelcome)
-	e.GET("/user/sign-in", handler.HandleSignin)
-	e.GET("/user/sign-up", handler.HandleSignup)
-
+	userHandler := handler.UserHandler{
+		UserRepo: repo_impl.NewUserRepoImpl(sql),
+	}
+	api := router.API{
+		Echo:        e,
+		UserHandler: userHandler,
+	}
+	api.SetupRoter() // thiết lập các route cho API
 	e.Logger.Fatal(e.Start(":8080"))
 }

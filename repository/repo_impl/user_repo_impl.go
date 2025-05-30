@@ -1,0 +1,65 @@
+package repo_impl
+
+import (
+	"backend-github-trending/db"
+	"backend-github-trending/handle_error"
+	"backend-github-trending/model"
+	"backend-github-trending/repository"
+	"context"
+	"github.com/labstack/gommon/log"
+	"github.com/lib/pq"
+	"time"
+)
+
+type UserRepoImpl struct {
+	sql *db.Sql
+}
+
+func NewUserRepoImpl(sql *db.Sql) repository.UserRepo {
+	return &UserRepoImpl{
+		sql: sql,
+	}
+}
+
+// tìm kiếm user trong cơ sở dữ liệu
+func (u *UserRepoImpl) FindUserByEmail(context context.Context, email string) (model.User, error) {
+	statement := `SELECT user_id, full_name, email, password, role, created_at, updated_at FROM users WHERE email = $1`
+	var user model.User
+	err := u.sql.Db.GetContext(context, &user, statement, email)
+	if err != nil {
+		log.Error(err.Error())
+		return model.User{}, err
+	}
+	return user, nil
+}
+
+// lưu user bằng postgreQl
+func (u *UserRepoImpl) SaveUser(context context.Context, user *model.User) (model.User, error) {
+	// Check if the user already exists
+	existingUser, err := u.FindUserByEmail(context, user.Email)
+	if err == nil && existingUser.UserId != "" { // User exists
+		return *user, handle_error.UserConflig
+	}
+
+	if err != nil && err.Error() != "sql: no rows in result set" { // Handle unexpected errors
+		log.Error(err.Error())
+		return *user, handle_error.SignupFail
+	}
+
+	// Prepare to insert the new user
+	statement := `INSERT INTO users (user_id, full_name, email, password, role, created_at, updated_at) 
+			VALUES (:user_id, :fullname, :email, :password, :role, :created_at, :updated_at)`
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
+
+	_, err = u.sql.Db.NamedExecContext(context, statement, user)
+	if err != nil {
+		log.Error(err.Error())
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code.Name() == "unique_violation" {
+			return *user, handle_error.UserConflig
+		}
+		return *user, handle_error.SignupFail
+	}
+
+	return *user, nil
+}
