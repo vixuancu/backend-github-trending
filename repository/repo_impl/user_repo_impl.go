@@ -4,8 +4,10 @@ import (
 	"backend-github-trending/db"
 	"backend-github-trending/handle_error"
 	"backend-github-trending/model"
+	"backend-github-trending/model/req"
 	"backend-github-trending/repository"
 	"context"
+	"database/sql"
 	"github.com/labstack/gommon/log"
 	"github.com/lib/pq"
 	"time"
@@ -62,4 +64,16 @@ func (u *UserRepoImpl) SaveUser(context context.Context, user *model.User) (mode
 	}
 
 	return *user, nil
+}
+
+func (u *UserRepoImpl) CheckLogin(context context.Context, loginReq req.ReqSignin) (model.User, error) {
+	user, err := u.FindUserByEmail(context, loginReq.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return user, handle_error.UserNotFound
+		}
+		log.Error(err.Error())
+		return user, err
+	}
+	return user, nil
 }

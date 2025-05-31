@@ -20,7 +20,7 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	if err != nil {
-		log.Debugf("password comparison failed: %v", err)
+		log.Error(err.Error())
 		return false
 	}
 	return true

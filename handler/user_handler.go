@@ -81,8 +81,46 @@ func (u *UserHandler) HandleSignup(c echo.Context) error {
 	})
 }
 
-//func (u *UserHandler) HandleSignin(c echo.Context) error {
-//	return c.JSON(http.StatusOK, echo.Map{
-//		"message": "Welcome to Sign in",
-//	})
-//}
+func (u *UserHandler) HandleSignin(c echo.Context) error {
+	req := req2.ReqSignin{}
+	if err := c.Bind(&req); err != nil { // lấy dữ liệu từ request body
+		log.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, model.Response{
+			http.StatusBadRequest,
+			err.Error(),
+			nil,
+		})
+	}
+	// validate dữ liệu bằng thư viện validator
+	validate := validator.New()
+	if err := validate.Struct(req); err != nil {
+		log.Error(err.Error())
+		return c.JSON(http.StatusBadRequest, model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+	user, err := u.UserRepo.CheckLogin(c.Request().Context(), req) // kiểm tra đăng nhập
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			http.StatusUnauthorized,
+			err.Error(),
+			nil,
+		})
+	}
+	// check pass
+	if !security.CheckPasswordHash(req.Password, user.Password) {
+		log.Error("Mật khẩu không đúng")
+		return c.JSON(http.StatusUnauthorized, model.Response{
+			http.StatusUnauthorized,
+			"Mật khẩu không đúng",
+			nil,
+		})
+	}
+	return c.JSON(http.StatusOK, model.Response{
+		http.StatusOK,
+		"Đăng nhập thành công",
+		user,
+	})
+}
