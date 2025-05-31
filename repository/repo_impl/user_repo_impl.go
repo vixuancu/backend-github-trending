@@ -48,7 +48,7 @@ func (u *UserRepoImpl) SaveUser(context context.Context, user *model.User) (mode
 
 	// Prepare to insert the new user
 	statement := `INSERT INTO users (user_id, full_name, email, password, role, created_at, updated_at) 
-			VALUES (:user_id, :fullname, :email, :password, :role, :created_at, :updated_at)`
+			VALUES (:user_id, :full_name, :email, :password, :role, :created_at, :updated_at)`
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 

@@ -3,12 +3,12 @@ package model
 import "time"
 
 type User struct {
-	UserId    string    `json:"user_id,omitempty"`    // ID người dùng omitempty // không trả về nếu là 0
-	Fullname  string    `json:"fullname,omitempty"`   // Tên đầy đủ người dùng
-	Email     string    `json:"email,omitempty"`      // Email người dùng
-	Password  string    `json:"password,omitempty"`   // Mật khẩu người dùng
-	Role      string    `json:"role,omitempty"`       // Vai trò người dùng (ví dụ: admin, user)
-	CreatedAt time.Time `json:"created_at,omitempty"` // Ngày tạo tài khoản
-	UpdatedAt time.Time `json:"updated_at,omitempty"` // Ngày cập nhật tài khoản
-	Token     string    `json:"token,omitempty"`      // Token xác thực người dùng
+	UserId    string    `json:"user_id,omitempty" db:"user_id"`
+	Fullname  string    `json:"fullname,omitempty" db:"full_name"`
+	Email     string    `json:"email,omitempty" db:"email"`
+	Password  string    `json:"password,omitempty" db:"password"`
+	Role      string    `json:"role,omitempty" db:"role"`
+	CreatedAt time.Time `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt time.Time `json:"updated_at,omitempty" db:"updated_at"`
+	Token     string    `json:"token,omitempty" db:"token"`
 }
