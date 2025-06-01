@@ -79,3 +79,18 @@ func (u *UserRepoImpl) CheckLogin(context context.Context, loginReq req.ReqSigni
 	// Trả về user nếu tìm thấy (việc xác minh mật khẩu sẽ được thực hiện ở handler)
 	return user, nil
 }
+
+// FindByID tìm kiếm người dùng theo ID
+func (u *UserRepoImpl) FindByID(userId string) (*model.User, error) {
+	statement := `SELECT user_id, full_name, email, password, role, created_at, updated_at FROM users WHERE user_id = $1`
+	var user model.User
+	err := u.sql.Db.Get(&user, statement, userId)
+	if err != nil {
+		log.Error(err.Error())
+		if err.Error() == "sql: no rows in result set" {
+			return nil, handle_error.UserNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
+}

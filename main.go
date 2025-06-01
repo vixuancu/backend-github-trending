@@ -5,6 +5,7 @@ import (
 	"backend-github-trending/handler"
 	"backend-github-trending/repository/repo_impl"
 	"backend-github-trending/router"
+	"backend-github-trending/utils"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 )
@@ -25,6 +26,8 @@ func main() {
 
 	defer sql.Close()
 	e := echo.New()
+	e.Validator = utils.NewValidator()
+	e.Use(utils.ValidationMiddleware())
 	userHandler := handler.UserHandler{
 		UserRepo: repo_impl.NewUserRepoImpl(sql),
 	}

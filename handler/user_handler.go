@@ -5,7 +5,7 @@ import (
 	req2 "backend-github-trending/model/req"
 	"backend-github-trending/repository"
 	"backend-github-trending/security"
-	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v5"
 	uuid "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -18,23 +18,12 @@ type UserHandler struct {
 
 func (u *UserHandler) HandleSignup(c echo.Context) error {
 	req := req2.ReqSignup{}
-	if err := c.Bind(&req); err != nil { // lấy dữ liệu từ request body
-		log.Error(err.Error())
-		return c.JSON(http.StatusBadRequest, model.Response{
-			http.StatusBadRequest,
-			err.Error(),
-			nil,
-		})
+	if err := c.Bind(&req); err != nil {
+		return err // Middleware sẽ xử lý lỗi này
 	}
-	// validate dữ liệu bằng thư viện validator
-	validate := validator.New()
-	if err := validate.Struct(req); err != nil {
-		log.Error(err.Error())
-		return c.JSON(http.StatusBadRequest, model.Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+
+	if err := c.Validate(&req); err != nil {
+		return err // Middleware sẽ xử lý lỗi này
 	}
 	// mã hóa mật khẩu
 	hashedPassword, err := security.HashPassword(req.Password)
@@ -121,16 +110,12 @@ func (u *UserHandler) HandleSignin(c echo.Context) error {
 		})
 	}
 
-	// validate dữ liệu bằng thư viện validator
-	validate := validator.New()
-	if err := validate.Struct(req); err != nil {
-		log.Error(err.Error())
-		return c.JSON(http.StatusBadRequest, model.Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    err.Error(),
-			Data:       nil,
-		})
+	// Sử dụng custom validator thay vì validator mặc định
+	if err := c.Validate(&req); err != nil {
+		// ValidationMiddleware sẽ xử lý
+		return err
 	}
+
 	user, err := u.UserRepo.CheckLogin(c.Request().Context(), req) // kiểm tra đăng nhập
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, model.Response{
@@ -168,6 +153,29 @@ func (u *UserHandler) HandleSignin(c echo.Context) error {
 
 // HandleProfile xử lý yêu cầu lấy thông tin người dùng
 func (u *UserHandler) HandleProfile(c echo.Context) error {
-	return nil
+	// Lấy thông tin user từ token JWT
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*model.JwtCustomClaims)
 
+	// Lấy userId từ claims
+	userId := claims.UserId
+
+	// Lấy thông tin người dùng từ database
+	userInfo, err := u.UserRepo.FindByID(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Lỗi khi lấy thông tin người dùng",
+			Data:       nil,
+		})
+	}
+
+	// Không trả về password cho client
+	userInfo.Password = ""
+
+	return c.JSON(http.StatusOK, model.Response{
+		StatusCode: http.StatusOK,
+		Message:    "Lấy thông tin người dùng thành công",
+		Data:       userInfo,
+	})
 }

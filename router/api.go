@@ -13,7 +13,7 @@ type API struct {
 
 func (api *API) SetupRoter() {
 
-	api.Echo.POST("/user/sign-in", api.UserHandler.HandleSignin) // xử lý yêu cầu đăng nhập người dùng
-	api.Echo.POST("/user/sign-up", api.UserHandler.HandleSignup) // xử lý yêu cầu đăng ký người dùng
-	api.Echo.POST("/user/profile", api.UserHandler.HandleProfile, middlewares.JWTMiddleware())
+	api.Echo.POST("/user/sign-in", api.UserHandler.HandleSignin)                              // xử lý yêu cầu đăng nhập người dùng
+	api.Echo.POST("/user/sign-up", api.UserHandler.HandleSignup)                              // xử lý yêu cầu đăng ký người dùng
+	api.Echo.GET("/user/profile", api.UserHandler.HandleProfile, middlewares.JWTMiddleware()) // xử lý yêu cầu lấy thông tin người dùng
 }
