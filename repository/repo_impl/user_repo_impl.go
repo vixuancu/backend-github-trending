@@ -94,3 +94,18 @@ func (u *UserRepoImpl) FindByID(userId string) (*model.User, error) {
 	}
 	return &user, nil
 }
+
+// UpdateProfile cập nhật thông tin người dùng
+func (u *UserRepoImpl) UpdateProfile(context context.Context, user *model.User) (model.User, error) {
+	statement := `UPDATE users SET full_name = :full_name, email = :email, updated_at = :updated_at WHERE user_id = :user_id`
+	user.UpdatedAt = time.Now()
+
+	_, err := u.sql.Db.NamedExecContext(context, statement, user)
+	if err != nil {
+		log.Error(err.Error())
+		return *user, handle_error.UpdateProfileFail
+	}
+
+	// Trả về người dùng đã cập nhật
+	return *user, nil
+}

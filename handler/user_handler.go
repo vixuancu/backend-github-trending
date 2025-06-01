@@ -179,3 +179,49 @@ func (u *UserHandler) HandleProfile(c echo.Context) error {
 		Data:       userInfo,
 	})
 }
+func (u *UserHandler) HandleUpdateProfile(c echo.Context) error {
+	// Lấy thông tin user từ token JWT
+	jwtToken := c.Get("user").(*jwt.Token)
+	claims := jwtToken.Claims.(*model.JwtCustomClaims)
+
+	// Lấy userId từ claims
+	userId := claims.UserId
+
+	// Bind request data
+	req := req2.RequestUpdateUser{}
+	if err := c.Bind(&req); err != nil {
+		return err // Middleware sẽ xử lý lỗi này
+	}
+
+	// Validate request data
+	if err := c.Validate(&req); err != nil {
+		return err // Middleware sẽ xử lý lỗi này
+	}
+
+	// Tạo đối tượng User mới với thông tin cập nhật
+	updatedUser := &model.User{
+		UserId:   userId,
+		Fullname: req.Fullname,
+		Email:    req.Email,
+	}
+
+	// Cập nhật thông tin người dùng
+	userInfo, err := u.UserRepo.UpdateProfile(c.Request().Context(), updatedUser)
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			StatusCode: http.StatusInternalServerError,
+			Message:    err.Error(),
+			Data:       nil,
+		})
+	}
+
+	// Không trả về password cho client
+	userInfo.Password = ""
+
+	return c.JSON(http.StatusOK, model.Response{
+		StatusCode: http.StatusOK,
+		Message:    "Cập nhật thông tin người dùng thành công",
+		Data:       userInfo,
+	})
+}
