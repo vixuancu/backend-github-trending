@@ -7,7 +7,6 @@ import (
 	"backend-github-trending/model/req"
 	"backend-github-trending/repository"
 	"context"
-	"database/sql"
 	"github.com/labstack/gommon/log"
 	"github.com/lib/pq"
 	"time"
@@ -69,11 +68,14 @@ func (u *UserRepoImpl) SaveUser(context context.Context, user *model.User) (mode
 func (u *UserRepoImpl) CheckLogin(context context.Context, loginReq req.ReqSignin) (model.User, error) {
 	user, err := u.FindUserByEmail(context, loginReq.Email)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		// So sánh chuỗi lỗi thay vì so sánh đối tượng lỗi
+		if err.Error() == "sql: no rows in result set" {
 			return user, handle_error.UserNotFound
 		}
 		log.Error(err.Error())
 		return user, err
 	}
+
+	// Trả về user nếu tìm thấy (việc xác minh mật khẩu sẽ được thực hiện ở handler)
 	return user, nil
 }

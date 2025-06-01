@@ -55,6 +55,7 @@ func (u *UserHandler) HandleSignup(c echo.Context) error {
 			err.Error(),
 		})
 	}
+
 	user := model.User{
 		UserId:   userId.String(),
 		Fullname: req.Fullname,
@@ -74,10 +75,21 @@ func (u *UserHandler) HandleSignup(c echo.Context) error {
 		})
 
 	}
+	// tạo token
+	token, err := security.GenToken(user)
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			http.StatusInternalServerError,
+			"Lỗi khi tạo token",
+			nil,
+		})
+	}
+	user.Token = token
 	return c.JSON(http.StatusOK, model.Response{
 		http.StatusOK,
 		"Đăng ký thành công",
-		nil,
+		user,
 	})
 }
 
@@ -85,12 +97,30 @@ func (u *UserHandler) HandleSignin(c echo.Context) error {
 	req := req2.ReqSignin{}
 	if err := c.Bind(&req); err != nil { // lấy dữ liệu từ request body
 		log.Error(err.Error())
+		// Kiểm tra lỗi EOF cụ thể - thường xảy ra khi request body rỗng
+		if err.Error() == "EOF" {
+			return c.JSON(http.StatusBadRequest, model.Response{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Request body trống. Vui lòng cung cấp email và mật khẩu.",
+				Data:       nil,
+			})
+		}
 		return c.JSON(http.StatusBadRequest, model.Response{
-			http.StatusBadRequest,
-			err.Error(),
-			nil,
+			StatusCode: http.StatusBadRequest,
+			Message:    "Định dạng request không hợp lệ: " + err.Error(),
+			Data:       nil,
 		})
 	}
+
+	// Kiểm tra thêm các trường trống sau khi binding
+	if req.Email == "" || req.Password == "" {
+		return c.JSON(http.StatusBadRequest, model.Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Email và mật khẩu là bắt buộc",
+			Data:       nil,
+		})
+	}
+
 	// validate dữ liệu bằng thư viện validator
 	validate := validator.New()
 	if err := validate.Struct(req); err != nil {
@@ -118,9 +148,26 @@ func (u *UserHandler) HandleSignin(c echo.Context) error {
 			nil,
 		})
 	}
+	// tạo token
+	token, err := security.GenToken(user)
+	if err != nil {
+		log.Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, model.Response{
+			http.StatusInternalServerError,
+			"Lỗi khi tạo token",
+			nil,
+		})
+	}
+	user.Token = token // gán token cho user
 	return c.JSON(http.StatusOK, model.Response{
 		http.StatusOK,
 		"Đăng nhập thành công",
 		user,
 	})
+}
+
+// HandleProfile xử lý yêu cầu lấy thông tin người dùng
+func (u *UserHandler) HandleProfile(c echo.Context) error {
+	return nil
+
 }
