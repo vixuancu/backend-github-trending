@@ -4,15 +4,22 @@ import (
 	"backend-github-trending/db"
 	"backend-github-trending/handler"
 	"backend-github-trending/helper"
+	"backend-github-trending/log"
 	"backend-github-trending/repository/repo_impl"
 	"backend-github-trending/router"
 	"backend-github-trending/utils"
+	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	"os"
 	"time"
 )
 
+func init() {
+	fmt.Println("DEV ENVIROMENT")
+	os.Setenv("APP_NAME", "github")
+	log.InitLogger(false)
+}
 func main() {
 	// connect database
 	sql := &db.Sql{
@@ -28,6 +35,11 @@ func main() {
 	}
 
 	defer sql.Close()
+	var email string
+	err := sql.Db.GetContext(context.Background(), &email, "SELECT email FROM users WHERE email=$1", "abc@gmail.com")
+	if err != nil {
+		log.Error(err.Error())
+	}
 	e := echo.New()
 	e.Validator = utils.NewValidator()
 	e.Use(utils.ValidationMiddleware())
