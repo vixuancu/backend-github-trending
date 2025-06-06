@@ -25,7 +25,7 @@ func init() {
 }
 func main() {
 	// connect database
-	dbHost := getEnv("DB_HOST", "localhost")
+	//dbHost := getEnv("DB_HOST", "localhost")
 	dbPortStr := getEnv("DB_PORT", "5432")
 	dbPort, err := strconv.Atoi(dbPortStr)
 	if err != nil {
@@ -33,7 +33,7 @@ func main() {
 	}
 
 	sql := &db.Sql{
-		Host:     dbHost,
+		Host:     "34.81.227.217",
 		Port:     dbPort,
 		Username: getEnv("DB_USER", "postgres"),
 		Password: getEnv("DB_PASSWORD", "123456"),

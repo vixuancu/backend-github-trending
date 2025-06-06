@@ -1,6 +1,6 @@
 development:
   dialect: postgres
-  datasource: host=localhost port=5432 user=postgres password=123456 dbname=github_trending sslmode=disable
+  datasource: host=34.81.227.217 port=5432 user=postgres password=123456 dbname=github_trending sslmode=disable
   dir: migrations
   table: migrations
 
