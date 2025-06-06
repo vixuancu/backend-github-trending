@@ -1,6 +1,6 @@
 pro:
 	docker rmi -f backend-github-trending:latest
-	docker-compose up
+	docker compose up -d
 
 dev:
 	cd cmd/dev; go run main.go
@@ -12,7 +12,7 @@ run:
 # Chạy Docker Compose ở chế độ detach (chạy ngầm)
 prod-d:
 	docker rmi -f backend-github-trending:latest
-	docker-compose up -d
+	docker compose up -d
 
 # Dừng và xóa các container
 down:
