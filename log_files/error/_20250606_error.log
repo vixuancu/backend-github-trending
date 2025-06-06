@@ -4,3 +4,5 @@ time="2025-06-06T13:05:24.21165931+07:00" level=error msg="sql: no rows in resul
 time="2025-06-06T13:13:45.796464852+07:00" level=error msg="sql: no rows in result set" file=/app/main.go line=52
 time="2025-06-06T13:15:23.433559936+07:00" level=error msg="sql: no rows in result set" file=/app/main.go line=52
 time="2025-06-06T13:18:41.286728702+07:00" level=error msg="sql: no rows in result set" file=/app/main.go line=52
+time="2025-06-06T16:13:39.7099534+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=52
+time="2025-06-06T16:37:41.717939+07:00" level=error msg="Failed to visit GitHub trending:Get \"https://github.com/trending\": dial tcp: lookup github.com: no such host" file="E:/TaiLieuHocGoLang/backend-github-trending/helper/repo_crawler.go" line=112

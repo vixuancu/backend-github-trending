@@ -8,6 +8,8 @@ services:  # Định nghĩa các dịch vụ (containers) trong ứng dụng
     build:
       context: .  # Tạo image từ Dockerfile trong thư mục hiện tại
     image: backend-github-trending:latest  # Đặt tên image rõ ràng
+    # Thêm option này để luôn build image thay vì pull từ Docker Hub
+    pull_policy: never
 
     container_name: backend-github-trending  # Đặt tên container để dễ quản lý
 
@@ -26,5 +28,4 @@ services:  # Định nghĩa các dịch vụ (containers) trong ứng dụng
       - DB_USER=postgres  # Tên user database
       - DB_PASSWORD=123456  # Mật khẩu database
 
-    volumes:  # Chia sẻ dữ liệu giữa máy host và container
-      - ./log_files:/app/log_files  # Lưu file log ra ngoài máy host
+
