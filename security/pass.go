@@ -1,7 +1,7 @@
 package security
 
 import (
-	"github.com/labstack/gommon/log"
+	"backend-github-trending/log"
 	"golang.org/x/crypto/bcrypt"
 )
 

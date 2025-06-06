@@ -3,11 +3,11 @@ package repo_impl
 import (
 	"backend-github-trending/db"
 	"backend-github-trending/handle_error"
+	"backend-github-trending/log"
 	"backend-github-trending/model"
 	"backend-github-trending/model/req"
 	"backend-github-trending/repository"
 	"context"
-	"github.com/labstack/gommon/log"
 	"github.com/lib/pq"
 	"time"
 )

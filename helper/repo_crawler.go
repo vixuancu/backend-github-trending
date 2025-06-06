@@ -2,12 +2,12 @@ package helper
 
 import (
 	"backend-github-trending/handle_error"
+	"backend-github-trending/log"
 	"backend-github-trending/model"
 	"backend-github-trending/repository"
 	"context"
 	"fmt"
 	"github.com/gocolly/colly/v2"
-	"github.com/labstack/gommon/log"
 	"regexp"
 	"runtime"
 	"strings"

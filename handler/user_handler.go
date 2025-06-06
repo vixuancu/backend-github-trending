@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"backend-github-trending/log"
 	"backend-github-trending/model"
 	req2 "backend-github-trending/model/req"
 	"backend-github-trending/repository"
@@ -8,7 +9,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	uuid "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"net/http"
 )
 

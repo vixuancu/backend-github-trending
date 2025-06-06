@@ -1,0 +1,40 @@
+# Executable files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Binary build folder
+/bin/
+/dist/
+/build/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# Log files
+/log_files/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Dependency directories
+/vendor/
+
+# Environment files
+.env
+.env.local
+
+# Không ignore các file cấu hình quan trọng
+!dbconfig.yml

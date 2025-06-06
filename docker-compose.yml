@@ -1,0 +1,30 @@
+# Docker Compose config cho dự án backend-github-trending
+# Không sử dụng thuộc tính version vì nó đã lỗi thời
+
+services:  # Định nghĩa các dịch vụ (containers) trong ứng dụng
+
+  # ------------------ DỊCH VỤ ỨNG DỤNG BACKEND ------------------
+  app:
+    build:
+      context: .  # Tạo image từ Dockerfile trong thư mục hiện tại
+    image: backend-github-trending:latest  # Đặt tên image rõ ràng
+
+    container_name: backend-github-trending  # Đặt tên container để dễ quản lý
+
+    restart: unless-stopped  # Tự động khởi động lại container khi bị lỗi
+                            # (trừ khi bạn chủ động dừng nó)
+
+    ports:  # Cổng để truy cập ứng dụng từ bên ngoài
+      - "8080:8080"  # Định dạng "cổng_máy_host:cổng_container"
+
+    environment:  # Các biến môi trường cho ứng dụng
+      - TZ=Asia/Ho_Chi_Minh  # Múi giờ Việt Nam
+      # Thông tin kết nối database - Sử dụng host.docker.internal để kết nối đến database local
+      - DB_HOST=host.docker.internal  # Đặc biệt: host.docker.internal trỏ đến máy host từ trong container
+      - DB_PORT=5432  # Cổng mặc định của PostgreSQL
+      - DB_NAME=github_trending  # Tên database
+      - DB_USER=postgres  # Tên user database
+      - DB_PASSWORD=123456  # Mật khẩu database
+
+    volumes:  # Chia sẻ dữ liệu giữa máy host và container
+      - ./log_files:/app/log_files  # Lưu file log ra ngoài máy host

@@ -1,1 +1,2 @@
-time="2025-06-04T22:38:32.1316937+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=41
+time="2025-06-04T23:32:36.9703076+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=41
+time="2025-06-04T23:39:52.8795406+07:00" level=error msg="dial tcp [::1]:543: connectex: No connection could be made because the target machine actively refused it." file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=33
