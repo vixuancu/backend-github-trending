@@ -6,3 +6,7 @@ time="2025-06-06T13:15:23.433559936+07:00" level=error msg="sql: no rows in resu
 time="2025-06-06T13:18:41.286728702+07:00" level=error msg="sql: no rows in result set" file=/app/main.go line=52
 time="2025-06-06T16:13:39.7099534+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=52
 time="2025-06-06T16:37:41.717939+07:00" level=error msg="Failed to visit GitHub trending:Get \"https://github.com/trending\": dial tcp: lookup github.com: no such host" file="E:/TaiLieuHocGoLang/backend-github-trending/helper/repo_crawler.go" line=112
+time="2025-06-06T23:53:21.229326+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=67
+time="2025-06-07T00:21:16.5104176+07:00" level=error msg="sql: no rows in result set" file="E:/TaiLieuHocGoLang/backend-github-trending/main.go" line=72
+time="2025-06-07T00:27:45.8357629+07:00" level=error msg="crypto/bcrypt: hashedPassword is not the hash of the given password" file="E:/TaiLieuHocGoLang/backend-github-trending/security/pass.go" line=23
+time="2025-06-07T00:27:45.8360804+07:00" level=error msg="Mật khẩu không đúng" file="E:/TaiLieuHocGoLang/backend-github-trending/handler/user_handler.go" line=152

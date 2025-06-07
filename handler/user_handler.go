@@ -16,6 +16,17 @@ type UserHandler struct {
 	UserRepo repository.UserRepo
 }
 
+// HandleSignup godoc
+// @Summary Đăng ký tài khoản mới
+// @Description API đăng ký tài khoản mới cho người dùng
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body req2.ReqSignup true "Thông tin đăng ký"
+// @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
+// @Failure 500 {object} model.Response
+// @Router /user/sign-up [post]
 func (u *UserHandler) HandleSignup(c echo.Context) error {
 	req := req2.ReqSignup{}
 	if err := c.Bind(&req); err != nil {
@@ -82,6 +93,18 @@ func (u *UserHandler) HandleSignup(c echo.Context) error {
 	})
 }
 
+// HandleSignin godoc
+// @Summary Đăng nhập
+// @Description API đăng nhập cho người dùng đã đăng ký
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user body req2.ReqSignin true "Thông tin đăng nhập"
+// @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
+// @Failure 401 {object} model.Response
+// @Failure 500 {object} model.Response
+// @Router /user/sign-in [post]
 func (u *UserHandler) HandleSignin(c echo.Context) error {
 	req := req2.ReqSignin{}
 	if err := c.Bind(&req); err != nil { // lấy dữ liệu từ request body
@@ -151,7 +174,17 @@ func (u *UserHandler) HandleSignin(c echo.Context) error {
 	})
 }
 
-// HandleProfile xử lý yêu cầu lấy thông tin người dùng
+// HandleProfile godoc
+// @Summary Lấy thông tin cá nhân
+// @Description API trả về thông tin cá nhân của người dùng đã đăng nhập
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} model.Response
+// @Failure 401 {object} model.Response
+// @Failure 500 {object} model.Response
+// @Router /user/profile [get]
 func (u *UserHandler) HandleProfile(c echo.Context) error {
 	// Lấy thông tin user từ token JWT
 	user := c.Get("user").(*jwt.Token)
@@ -179,6 +212,20 @@ func (u *UserHandler) HandleProfile(c echo.Context) error {
 		Data:       userInfo,
 	})
 }
+
+// HandleUpdateProfile godoc
+// @Summary Cập nhật thông tin cá nhân
+// @Description API cập nhật thông tin cá nhân của người dùng
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param user body req2.RequestUpdateUser true "Thông tin cần cập nhật"
+// @Success 200 {object} model.Response
+// @Failure 400 {object} model.Response
+// @Failure 401 {object} model.Response
+// @Failure 500 {object} model.Response
+// @Router /user/profile/update [put]
 func (u *UserHandler) HandleUpdateProfile(c echo.Context) error {
 	// Lấy thông tin user từ token JWT
 	jwtToken := c.Get("user").(*jwt.Token)

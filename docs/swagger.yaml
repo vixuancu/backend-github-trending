@@ -1,0 +1,202 @@
+basePath: /
+definitions:
+  model.Response:
+    properties:
+      data:
+        description: dữ liệu trả về, có thể là bất kỳ kiểu dữ liệu nào
+      message:
+        description: thông báo trả về
+        type: string
+      status_code:
+        description: mã trạng thái HTTP
+        type: integer
+    type: object
+  req.ReqSignin:
+    properties:
+      email:
+        type: string
+      password:
+        maxLength: 50
+        minLength: 5
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  req.ReqSignup:
+    properties:
+      email:
+        type: string
+      fullname:
+        maxLength: 50
+        minLength: 3
+        type: string
+      password:
+        maxLength: 50
+        minLength: 8
+        type: string
+    required:
+    - email
+    - fullname
+    - password
+    type: object
+  req.RequestUpdateUser:
+    properties:
+      email:
+        description: Email của người dùng, bắt buộc và phải là định dạng email hợp
+          lệ
+        type: string
+      fullname:
+        description: Tên đầy đủ của người dùng, bắt buộc, từ 3 đến 50 ký tự
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - fullname
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: More
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Github Trending API
+  version: "1.0"
+paths:
+  /user/profile:
+    get:
+      consumes:
+      - application/json
+      description: API trả về thông tin cá nhân của người dùng đã đăng nhập
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Lấy thông tin cá nhân
+      tags:
+      - user
+  /user/profile/update:
+    put:
+      consumes:
+      - application/json
+      description: API cập nhật thông tin cá nhân của người dùng
+      parameters:
+      - description: Thông tin cần cập nhật
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/req.RequestUpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Cập nhật thông tin cá nhân
+      tags:
+      - user
+  /user/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: API đăng nhập cho người dùng đã đăng ký
+      parameters:
+      - description: Thông tin đăng nhập
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/req.ReqSignin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Đăng nhập
+      tags:
+      - user
+  /user/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: API đăng ký tài khoản mới cho người dùng
+      parameters:
+      - description: Thông tin đăng ký
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/req.ReqSignup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Đăng ký tài khoản mới
+      tags:
+      - user
+securityDefinitions:
+  jwt:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

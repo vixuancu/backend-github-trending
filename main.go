@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend-github-trending/db"
+	_ "backend-github-trending/docs" // Import docs package
 	"backend-github-trending/handler"
 	"backend-github-trending/helper"
 	"backend-github-trending/log"
@@ -11,6 +12,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"os"
 	"strconv"
 	"time"
@@ -23,9 +25,27 @@ func init() {
 	//os.Setenv("APP_NAME", "github")
 	log.InitLogger(false)
 }
+
+// @title Github Trending API
+// @version 1.0
+// @description More
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @securityDefinitions.apikey jwt
+// @in header
+// @name Authorization
+
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// connect database
-	//dbHost := getEnv("DB_HOST", "localhost")
+	dbHost := getEnv("DB_HOST", "localhost")
 	dbPortStr := getEnv("DB_PORT", "5432")
 	dbPort, err := strconv.Atoi(dbPortStr)
 	if err != nil {
@@ -33,7 +53,7 @@ func main() {
 	}
 
 	sql := &db.Sql{
-		Host:     "34.81.227.217",
+		Host:     dbHost, //34.81.227.217
 		Port:     dbPort,
 		Username: getEnv("DB_USER", "postgres"),
 		Password: getEnv("DB_PASSWORD", "123456"),
@@ -52,6 +72,7 @@ func main() {
 		log.Error(err.Error())
 	}
 	e := echo.New()
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.Validator = utils.NewValidator()
 	e.Use(utils.ValidationMiddleware())
 	userHandler := handler.UserHandler{
